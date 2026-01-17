@@ -77,11 +77,14 @@ ShoppingApp is a web-based e-commerce platform built with ASP.NET Core MVC. It a
 - **Other Tools:** Git, GitHub Actions (CI/CD in [.github/workflows/](.github/workflows/))
 
 ## Demo
-<img width="947" height="494" alt="image" src="https://github.com/user-attachments/assets/55a2fa0e-5669-41bb-bb5a-41328e0a9993" />
-<img width="950" height="524" alt="image" src="https://github.com/user-attachments/assets/2899b8a4-2804-4f23-8dca-650b24a87843" />
-<img width="953" height="525" alt="image" src="https://github.com/user-attachments/assets/42113d8e-f277-4531-b79e-4715bc010db1" />
-<img width="940" height="531" alt="image" src="https://github.com/user-attachments/assets/2ae3a106-6e85-465e-88ba-89656ea47c33" />
-<img width="954" height="472" alt="image" src="https://github.com/user-attachments/assets/528ec393-0292-498c-b51b-a18c56868bb5" />
+<img width="952" height="524" alt="image" src="https://github.com/user-attachments/assets/108316c6-f3a3-49c5-8315-b399ecd5a9c9" />
+<img width="956" height="530" alt="image" src="https://github.com/user-attachments/assets/fd268546-b1a3-4f68-8c81-c4da036bc11e" />
+<img width="952" height="530" alt="image" src="https://github.com/user-attachments/assets/8e38b2dc-15f8-4a20-ad81-5d98cc16a4e3" />
+<img width="952" height="526" alt="image" src="https://github.com/user-attachments/assets/eb4c9435-74d2-471e-8bfa-8a9e2dbf2e18" />
+
+
+
+
 
 
 
