@@ -35,6 +35,50 @@
     </div>
 </section>
 
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-primary-subtle rounded-circle mx-auto mb-3">
+                        <i class="bi bi-truck text-primary"></i>
+                    </div>
+                    <h6 class="fw-bold">Free Shipping</h6>
+                    <small class="text-muted">On orders above ₹999</small>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-success-subtle rounded-circle mx-auto mb-3">
+                        <i class="bi bi-shield-check text-success"></i>
+                    </div>
+                    <h6 class="fw-bold">Secure Payment</h6>
+                    <small class="text-muted">100% secure transactions</small>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-warning-subtle rounded-circle mx-auto mb-3">
+                        <i class="bi bi-arrow-repeat text-warning"></i>
+                    </div>
+                    <h6 class="fw-bold">Easy Returns</h6>
+                    <small class="text-muted">30-day return policy</small>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-info-subtle rounded-circle mx-auto mb-3">
+                        <i class="bi bi-headset text-info"></i>
+                    </div>
+                    <h6 class="fw-bold">24/7 Support</h6>
+                    <small class="text-muted">Dedicated support team</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Categories Section -->
 <section id="categories" class="py-5">
     <div class="container">
@@ -68,6 +112,29 @@
                     </a>
                 </div>
             }
+        </div>
+    </div>
+</section>
+
+<!-- Discount Banner -->
+<section class="py-5 discount-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="fw-bold text-white mb-3">
+                    <i class="bi bi-percent me-2"></i>Special Discount Offer!
+                </h2>
+                <p class="lead text-white-50 mb-0">
+                    Get <strong class="text-warning">@Model.DiscountPercentage% OFF</strong> on all products priced above 
+                    <strong class="text-warning">₹@Model.MinimumAmountForDiscount.ToString("N0")</strong>. 
+                    Limited time offer - Shop now and save big!
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0" data-aos="fade-left">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-warning btn-lg">
+                    <i class="bi bi-arrow-right me-2"></i>Claim Discount
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -135,6 +202,22 @@
                     </div>
                 </div>
             }
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center" data-aos="fade-up">
+                <h3 class="fw-bold mb-3">Subscribe to Our Newsletter</h3>
+                <p class="mb-4">Get updates on new products and exclusive offers!</p>
+                <form class="d-flex gap-2 justify-content-center">
+                    <input type="email" class="form-control form-control-lg" placeholder="Enter your email" style="max-width: 300px;">
+                    <button type="submit" class="btn btn-warning btn-lg">Subscribe</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>

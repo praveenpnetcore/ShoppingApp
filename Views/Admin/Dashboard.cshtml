@@ -1,0 +1,130 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Dashboard</h4>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-primary-subtle me-3">
+                        <i class="bi bi-box-seam text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Products</h6>
+                        <h3 class="fw-bold mb-0">@ViewBag.TotalProducts</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-success-subtle me-3">
+                        <i class="bi bi-receipt text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Orders</h6>
+                        <h3 class="fw-bold mb-0">@ViewBag.TotalOrders</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-warning-subtle me-3">
+                        <i class="bi bi-grid text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Categories</h6>
+                        <h3 class="fw-bold mb-0">@ViewBag.TotalCategories</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-info-subtle me-3">
+                        <i class="bi bi-currency-rupee text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Revenue</h6>
+                        <h3 class="fw-bold mb-0">₹@(((decimal)ViewBag.TotalRevenue).ToString("N0"))</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="card table-card shadow-sm">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Orders</h5>
+        <a asp-action="Orders" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Order #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th class="pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.RecentOrders != null)
+                    {
+                        @foreach (var order in (IEnumerable<Order>)ViewBag.RecentOrders)
+                        {
+                            <tr>
+                                <td class="ps-4"><strong>@order.OrderNumber</strong></td>
+                                <td>@order.CustomerName</td>
+                                <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
+                                <td class="fw-bold">₹@order.TotalAmount.ToString("N0")</td>
+                                <td>
+                                    @{
+                                        var statusClass = order.Status switch
+                                        {
+                                            OrderStatus.Pending => "warning",
+                                            OrderStatus.Confirmed => "info",
+                                            OrderStatus.Processing => "primary",
+                                            OrderStatus.Shipped => "secondary",
+                                            OrderStatus.Delivered => "success",
+                                            OrderStatus.Cancelled => "danger",
+                                            _ => "secondary"
+                                        };
+                                    }
+                                    <span class="badge bg-@statusClass">@order.Status</span>
+                                </td>
+                                <td class="pe-4">
+                                    <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-// ShoppingApp - JavaScript Functions
+// ShopEase - JavaScript Functions
 
 // Initialize AOS (Animate On Scroll)
 document.addEventListener('DOMContentLoaded', function() {
