@@ -1,0 +1,172 @@
+@model Order
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-receipt me-2 text-primary"></i>Order #@Model.OrderNumber</h4>
+    <a asp-action="Orders" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Orders
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Order Items -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Product</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end pe-4">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems!)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            @if (item.Product != null)
+                                            {
+                                                <img src="@item.Product.ImageUrl" alt="@item.ProductName" class="rounded me-3" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;"
+                                                     onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                                            }
+                                            <span>@item.ProductName</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">₹@item.UnitPrice.ToString("N0")</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end pe-4 fw-bold">₹@item.TotalPrice.ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold">Customer Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Contact Details</h6>
+                        <p class="mb-1"><strong>@Model.CustomerName</strong></p>
+                        <p class="mb-1"><i class="bi bi-envelope me-2"></i>@Model.Email</p>
+                        <p class="mb-0"><i class="bi bi-telephone me-2"></i>@Model.Phone</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Shipping Address</h6>
+                        <address class="mb-0">
+                            @Model.ShippingAddress<br>
+                            @Model.City, @Model.State<br>
+                            PIN: @Model.PinCode
+                        </address>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Order Summary -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Order Date:</span>
+                    <span>@Model.OrderDate.ToString("dd MMM yyyy")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Payment:</span>
+                    <span>@Model.PaymentMethod</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal:</span>
+                    <span>₹@Model.SubTotal.ToString("N0")</span>
+                </div>
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Discount (@Model.DiscountPercentage%):</span>
+                        <span>- ₹@Model.DiscountAmount.ToString("N0")</span>
+                    </div>
+                }
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Shipping:</span>
+                    <span class="text-success">FREE</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold fs-5">Total:</span>
+                    <span class="fw-bold fs-4 text-primary">₹@Model.TotalAmount.ToString("N0")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Status -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold">Update Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Current Status</label>
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            OrderStatus.Pending => "warning",
+                            OrderStatus.Confirmed => "info",
+                            OrderStatus.Processing => "primary",
+                            OrderStatus.Shipped => "secondary",
+                            OrderStatus.Delivered => "success",
+                            OrderStatus.Cancelled => "danger",
+                            _ => "secondary"
+                        };
+                    }
+                    <div>
+                        <span class="badge bg-@statusClass fs-6">@Model.Status</span>
+                    </div>
+                </div>
+                <form asp-action="UpdateOrderStatus" method="post">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Change Status To</label>
+                        <select name="status" class="form-select">
+                            @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                            {
+                                if (Model.Status == status)
+                                {
+                                    <option value="@status" selected>@status</option>
+                                }
+                                else
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-lg me-2"></i>Update Status
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

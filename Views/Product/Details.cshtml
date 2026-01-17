@@ -1,0 +1,156 @@
+@model ProductDetailViewModel
+@{
+    ViewData["Title"] = Model.Product.Name;
+}
+
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index">Products</a></li>
+                <li class="breadcrumb-item active">@Model.Product.Name</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <!-- Product Image -->
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="product-detail-image-wrapper position-relative">
+                    @if (Model.IsDiscountApplicable)
+                    {
+                        <div class="position-absolute top-0 start-0 m-3 z-1">
+                            <span class="badge bg-danger fs-6 px-3 py-2">@Model.DiscountPercentage% OFF</span>
+                        </div>
+                    }
+                    <img src="@Model.Product.ImageUrl" class="img-fluid rounded-4 shadow-lg w-100" alt="@Model.Product.Name"
+                         onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" id="mainProductImage">
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-lg-6" data-aos="fade-left">
+                <span class="badge bg-primary mb-3">@Model.Product.Category?.Name</span>
+                <h1 class="fw-bold mb-3">@Model.Product.Name</h1>
+
+                <!-- Price -->
+                <div class="price-section mb-4 p-4 bg-light rounded-4">
+                    @if (Model.IsDiscountApplicable)
+                    {
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-decoration-line-through text-muted fs-4">₹@Model.Product.Price.ToString("N0")</span>
+                            <span class="fw-bold text-success display-5">₹@Model.DiscountedPrice.ToString("N0")</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-success-subtle text-success px-3 py-2">
+                                <i class="bi bi-tag-fill me-1"></i>
+                                You save ₹@((Model.Product.Price - Model.DiscountedPrice).ToString("N0")) (@Model.DiscountPercentage% OFF)
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="fw-bold text-primary display-5">₹@Model.Product.Price.ToString("N0")</span>
+                        @if (Model.Product.Price < Model.MinimumAmountForDiscount)
+                        {
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Add products worth ₹@((Model.MinimumAmountForDiscount - Model.Product.Price).ToString("N0")) more to get @Model.DiscountPercentage% discount
+                            </small>
+                        }
+                    }
+                </div>
+
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    @if (Model.Product.StockQuantity > 0)
+                    {
+                        <span class="badge bg-success-subtle text-success fs-6 px-3 py-2">
+                            <i class="bi bi-check-circle-fill me-1"></i>In Stock (@Model.Product.StockQuantity available)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger-subtle text-danger fs-6 px-3 py-2">
+                            <i class="bi bi-x-circle-fill me-1"></i>Out of Stock
+                        </span>
+                    }
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-2">Description</h5>
+                    <p class="text-muted">@Model.Product.Description</p>
+                </div>
+
+                <!-- Quantity & Add to Cart -->
+                @if (Model.Product.StockQuantity > 0)
+                {
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="quantity-selector">
+                            <button class="btn btn-outline-secondary qty-btn" data-action="decrease">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <input type="number" class="form-control text-center quantity-input" value="1" min="1" 
+                                   max="@Model.Product.StockQuantity" id="productQuantity" style="width: 70px;">
+                            <button class="btn btn-outline-secondary qty-btn" data-action="increase">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <button class="btn btn-primary btn-lg flex-grow-1 add-to-cart-detail-btn" 
+                                data-product-id="@Model.Product.Id">
+                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                        </button>
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-bag me-2"></i>View Cart
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-lg w-100 mb-4" disabled>
+                        <i class="bi bi-x-circle me-2"></i>Out of Stock
+                    </button>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity selector
+        const qtyBtns = document.querySelectorAll('.qty-btn');
+        const qtyInput = document.getElementById('productQuantity');
+        const maxQty = parseInt(qtyInput?.max || 10);
+
+        qtyBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                let currentVal = parseInt(qtyInput.value) || 1;
+                if (this.dataset.action === 'increase' && currentVal < maxQty) {
+                    qtyInput.value = currentVal + 1;
+                } else if (this.dataset.action === 'decrease' && currentVal > 1) {
+                    qtyInput.value = currentVal - 1;
+                }
+            });
+        });
+
+        // Add to cart from detail page
+        const addToCartDetailBtn = document.querySelector('.add-to-cart-detail-btn');
+        if (addToCartDetailBtn) {
+            addToCartDetailBtn.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                const quantity = parseInt(qtyInput?.value || 1);
+                addToCart(productId, quantity);
+            });
+        }
+    });
+</script>
+}

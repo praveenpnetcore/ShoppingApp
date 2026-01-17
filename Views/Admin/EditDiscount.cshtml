@@ -1,0 +1,111 @@
+@model DiscountSetting
+@{
+    ViewData["Title"] = "Edit Discount Setting";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-pencil me-2 text-primary"></i>Edit Discount Setting</h4>
+    <a asp-action="DiscountSettings" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="EditDiscount" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CreatedDate" />
+                    
+                    <div class="mb-4">
+                        <label asp-for="SettingName" class="form-label fw-bold">Setting Name <span class="text-danger">*</span></label>
+                        <input asp-for="SettingName" class="form-control form-control-lg" placeholder="e.g., High Value Product Discount">
+                        <span asp-validation-for="SettingName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="MinimumAmountThreshold" class="form-label fw-bold">
+                                Minimum Amount Threshold (₹) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">₹</span>
+                                <input asp-for="MinimumAmountThreshold" class="form-control" type="number" step="0.01" min="0">
+                            </div>
+                            <small class="text-muted">Products priced above this amount will get the discount</small>
+                            <span asp-validation-for="MinimumAmountThreshold" class="text-danger small d-block"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DiscountPercentage" class="form-label fw-bold">
+                                Discount Percentage (%) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="DiscountPercentage" class="form-control" type="number" step="0.01" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted">Enter value between 0 and 100</small>
+                            <span asp-validation-for="DiscountPercentage" class="text-danger small d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-bold">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" 
+                                  placeholder="Describe this discount setting..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" style="width: 3em; height: 1.5em;">
+                            <label asp-for="IsActive" class="form-check-label fw-bold ms-2">Active</label>
+                        </div>
+                        <small class="text-muted">Only active discount settings will be applied to products</small>
+                    </div>
+
+                    <!-- Preview Section -->
+                    <div class="alert alert-primary mb-4">
+                        <h6 class="alert-heading fw-bold"><i class="bi bi-eye me-2"></i>Preview</h6>
+                        <p class="mb-0">
+                            Products priced above <strong>₹<span id="previewAmount">@Model.MinimumAmountThreshold.ToString("N0")</span></strong> 
+                            will receive a discount of <strong><span id="previewPercent">@Model.DiscountPercentage</span>%</strong>
+                        </p>
+                        <p class="mb-0 mt-2">
+                            <em>Example: A product priced at ₹10,000 will show as ₹<span id="previewPrice">@((10000 - (10000 * Model.DiscountPercentage / 100)).ToString("N0"))</span></em>
+                        </p>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Save Changes
+                        </button>
+                        <a asp-action="DiscountSettings" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Live preview update
+        document.getElementById('MinimumAmountThreshold').addEventListener('input', updatePreview);
+        document.getElementById('DiscountPercentage').addEventListener('input', updatePreview);
+
+        function updatePreview() {
+            const amount = parseFloat(document.getElementById('MinimumAmountThreshold').value) || 0;
+            const percent = parseFloat(document.getElementById('DiscountPercentage').value) || 0;
+            
+            document.getElementById('previewAmount').textContent = amount.toLocaleString('en-IN');
+            document.getElementById('previewPercent').textContent = percent;
+            
+            const examplePrice = 10000;
+            const discountedPrice = examplePrice - (examplePrice * percent / 100);
+            document.getElementById('previewPrice').textContent = discountedPrice.toLocaleString('en-IN');
+        }
+    </script>
+}

@@ -1,0 +1,66 @@
+@model IEnumerable<DiscountSetting>
+@{
+    ViewData["Title"] = "Discount Settings";
+    Layout = "_AdminLayout";
+    bool disableButton = Model != null && Model.Any(x => x.IsActive);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-percent me-2 text-primary"></i>Discount Settings</h4>
+    <a asp-action="CreateDiscount"
+       class="btn btn-primary @(disableButton ? "disabled" : "")"
+       style="@(disableButton ? "pointer-events: none; opacity: 0.6;" : "")">
+        <i class="bi bi-plus-lg me-2"></i>Add New Discount
+    </a>
+</div>
+
+<div class="card table-card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Setting Name</th>
+                        <th>Min Amount</th>
+                        <th>Discount %</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th class="pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var setting in Model)
+                    {
+                        <tr>
+                            <td class="ps-4"><strong>@setting.SettingName</strong></td>
+                            <td>₹@setting.MinimumAmountThreshold.ToString("N0")</td>
+                            <td><span class="badge bg-success fs-6">@setting.DiscountPercentage%</span></td>
+                            <td>
+                                @if (setting.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td>@setting.Description</td>
+                            <td class="pe-4">
+                                <a asp-action="EditDiscount" asp-route-id="@setting.Id" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle me-2"></i>
+    <strong>Note:</strong> The active discount will be automatically applied to products priced above the minimum amount threshold.
+    Customers will see the discounted price on products, cart, and checkout pages.
+</div>
